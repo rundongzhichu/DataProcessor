@@ -8,24 +8,45 @@
         <version>3.1.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <modules>
+        <module>shichi-core</module>
+    </modules>
+
     <groupId>com.shichi.history</groupId>
     <artifactId>ShihChi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ShihChi</name>
     <description>Demo project for Spring Boot</description>
+
     <properties>
-        <java.version>20</java.version>
+        <java.version>17</java.version>
+        <spring.doc.version>2.0.2</spring.doc.version>
     </properties>
+
     <dependencies>
+        <!--Spting boot web satrter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+
+        <!--swagger-3.x  Spring doc -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${spring.doc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+            <version>${spring.doc.version}</version>
         </dependency>
     </dependencies>
 

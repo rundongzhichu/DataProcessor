@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Shichi
+    version: 1.0.0-SNAPSHOT
+    description: This is a project for Shichi story
