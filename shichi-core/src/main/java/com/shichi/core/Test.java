@@ -1,17 +1,12 @@
-package com.shichi.core.excel.resolver
+package com.shichi.core;
 
-import org.tsc.anno.Excel;
 import io.micrometer.common.util.StringUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.tsc.model.Gender;
-import org.tsc.model.Race;
-import org.tsc.model.RecipientStatus;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -19,11 +14,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CellResolver {
-
-    private static final String GET = "get";
-    private static final String IS = "is";
-    private static final String SET = "set";
+public class Test {
 
     public static HSSFWorkbook toExcel(List objList) {
         if (CollectionUtils.isEmpty(objList)) throw new NullPointerException("Empty Object List!");
@@ -130,7 +121,6 @@ public class CellResolver {
         return models;
     }
 
-
     private static String valueCheck(Cell cell, String rowName, Boolean isMust) throws Exception {
         if (cell == null && isMust) {
             throw new Exception(rowName + " can not be empty!" );
@@ -204,4 +194,5 @@ public class CellResolver {
             return true;
         }
     }
+
 }
