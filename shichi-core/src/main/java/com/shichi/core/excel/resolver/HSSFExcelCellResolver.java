@@ -1,7 +1,6 @@
 package com.shichi.core.excel.resolver;
 
 import com.shichi.core.excel.anno.ECell;
-import com.shichi.core.utils.ReflectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -44,4 +43,19 @@ public class HSSFExcelCellResolver<RO, CF extends Field, CA extends ECell> {
         return ca.index();
     }
 
+    public void setFieldValue(Object obj, Object value) {
+        cf.getType().getName();
+        if(cf.getModifiers() != Modifier.PUBLIC) {
+            cf.setAccessible(true);
+        }
+        try {
+            cf.set(obj, cf.getType().cast(value));
+        } catch (IllegalAccessException e) {
+            logger.error("Can not set value", e);
+        }
+    }
+
+    public CA getCa() {
+        return ca;
+    }
 }
