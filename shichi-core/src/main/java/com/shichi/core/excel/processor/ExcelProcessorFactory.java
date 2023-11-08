@@ -8,7 +8,7 @@ import com.shichi.core.utils.ReflectUtils;
 public class ExcelProcessorFactory {
 
     public static <E> ExcelFileProcessor<E> getProcessor(E e) {
-        ExcelResolver excelResolver = new ExcelResolver(ReflectUtils.getAnnonation(e, Excel.class));
+        ExcelResolver excelResolver = new ExcelResolver(ReflectUtils.getAnnonation(e, Excel.class), e);
         return excelResolver.getProcessor();
     }
 

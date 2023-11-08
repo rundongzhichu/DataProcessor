@@ -1,7 +1,11 @@
 package com.shichi.core.excel.processor;
 
 import com.shichi.core.excel.anno.ECell;
+import com.shichi.core.excel.anno.ERow;
+import com.shichi.core.excel.anno.ERows;
 import com.shichi.core.excel.resolver.HSSFExcelCellResolver;
+import com.shichi.core.excel.resolver.HSSFExcelRowResolver;
+import com.shichi.core.excel.resolver.HSSFExcelRowsResolver;
 import com.shichi.core.utils.ReflectUtils;
 import io.micrometer.common.util.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,13 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HSSFExcelProcessor<R> extends DefaultExcelProcessor<R> {
+public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
 
     Logger logger = LoggerFactory.getLogger(HSSFExcelProcessor.class);
 
     private HSSFWorkbook workbook;
 
-    public HSSFExcelProcessor() {
+    private E e;
+
+    public HSSFExcelProcessor(E e) {
+        this.e = e;
         workbook = new HSSFWorkbook();
     }
 
@@ -38,15 +45,40 @@ public class HSSFExcelProcessor<R> extends DefaultExcelProcessor<R> {
         return workbook;
     }
 
-    public void parseRowObjToExcel(HSSFSheet sheet, int currentRow, R excelObj) {
+    public <E> void parseRowModelObjToHSSFExcel(E excel) {
+        Field[] fields = excel.getClass().getDeclaredFields();
+        try {
+            for (Field field :
+                    fields) {
+                ERows eRows = ReflectUtils.getAnnonation(field, ERows.class);
+                if(eRows != null) {
+                    HSSFExcelRowsResolver hssfExcelRowsResolver = new HSSFExcelRowsResolver(excel, field, eRows);
+                    Object rowsObj = field.get(excel);
+                    assert rowsObj instanceof List;
+                    parseRowObjsToExcel((List)rowsObj, false);
+                }
+
+                ERow eRow = ReflectUtils.getAnnonation(field, ERow.class);
+                if(eRow != null) {
+                    HSSFExcelRowResolver hssfExcelRowResolver = new HSSFExcelRowResolver(excel, field, eRow);
+                    Object rowObj = field.get(excel);
+                    parseRowObjsToExcel(List.of(rowObj), false);
+                }
+            }
+        } catch (IllegalAccessException illegalAccessException) {
+            logger.error("Illegal Access!", e);
+        }
+    }
+
+    public <R> void parseRowObjToExcel(HSSFSheet sheet, int currentRow, R rowObj) {
         HSSFRow row = sheet.createRow(++currentRow);
-        Class excelObjClass = excelObj.getClass();
+        Class excelObjClass = rowObj.getClass();
         Field[] fields = excelObjClass.getDeclaredFields();
         for (Field field :
                 fields) {
             ECell cell = ReflectUtils.getAnnonation(field, ECell.class);
             if(cell == null) continue;
-            HSSFExcelCellResolver hssfExcelCellResolver = new HSSFExcelCellResolver(excelObj, field, cell);
+            HSSFExcelCellResolver hssfExcelCellResolver = new HSSFExcelCellResolver(rowObj, field, cell);
             Object value = hssfExcelCellResolver.getFieldValue();
             HSSFCell hssfCell = row.createCell(hssfExcelCellResolver.getColumnIndex());
             if(value != null) {
@@ -55,24 +87,23 @@ public class HSSFExcelProcessor<R> extends DefaultExcelProcessor<R> {
         }
     }
 
-    public void parseRowObjsToExcel(List<R> excelObjs, boolean newSheet) {
-        if (CollectionUtils.isEmpty(excelObjs)) throw new NullPointerException("Empty Object List!");
+    public <R> void parseRowObjsToExcel(List<R> rowObjs, boolean newSheet) {
+        if (CollectionUtils.isEmpty(rowObjs)) throw new NullPointerException("Empty Object List!");
         int activeSheet = workbook.getActiveSheetIndex();
         HSSFSheet sheet = workbook.getSheetAt(activeSheet);
         if(newSheet) {
             sheet = workbook.createSheet();
         }
         int lastRowNum = sheet.getLastRowNum();
-        for (int i = 0, size = excelObjs.size(); i < size; i++) {
-            parseRowObjToExcel(sheet, lastRowNum, excelObjs.get(i));
+        for (int i = 0, size = rowObjs.size(); i < size; i++) {
+            parseRowObjToExcel(sheet, lastRowNum, rowObjs.get(i));
         }
     }
 
-    public R parseExcelRowToObj(HSSFSheet sheet, int currentRow, Class<R> rc) {
+    public <R> R parseExcelRowToObj(HSSFSheet sheet, int currentRow, Class<R> rc) {
         HSSFRow row = sheet.getRow(currentRow);
         Field[] fields = rc.getDeclaredFields();
         Map<Integer, HSSFExcelCellResolver>  cellFields = new HashMap<>();
-        int index = 0;
         for (Field field :
                 fields) {
             ECell cell = ReflectUtils.getAnnonation(field, ECell.class);
@@ -94,20 +125,20 @@ public class HSSFExcelProcessor<R> extends DefaultExcelProcessor<R> {
                 hssfExcelCellResolver.setFieldValue(r, value);
             }
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            logger.error("can not instantiate a instance.", e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("can not access the field.", e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            logger.error("can not invoke method.", e);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            logger.error("no such method.", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error occurs.", e);
         }
         return r;
     }
 
-    public List<R> parseExcelRowsToObjs(Class<R> rc) {
+    public <R> List<R> parseExcelRowsToObjs(Class<R> rc) {
         int activeSheet = workbook.getActiveSheetIndex();
         HSSFSheet sheet = workbook.getSheetAt(activeSheet);
 
@@ -147,6 +178,7 @@ public class HSSFExcelProcessor<R> extends DefaultExcelProcessor<R> {
             }
             return true;
         } catch (Exception e) {
+            logger.error("an error occurs.", e);
             return true;
         }
     }
