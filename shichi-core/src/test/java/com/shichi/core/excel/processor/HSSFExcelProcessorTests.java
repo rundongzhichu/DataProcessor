@@ -31,14 +31,11 @@ public class HSSFExcelProcessorTests {
 
     @Test
     public void testParseExcelToObject() {
-        HSSFExcelProcessor hssfExcelProcessor = null;
+        HSSFExcelProcessor<HSSFExcelObj> hssfExcelProcessor = null;
         try {
             hssfExcelProcessor = new HSSFExcelProcessor<>("test.xlsx");
-            List<HSSFRowObj> rowObjs = hssfExcelProcessor.parseExcelRowsToObjs(HSSFRowObj.class);
-            for (HSSFRowObj row :
-                    rowObjs) {
-                System.out.println(row.getColumn2());
-            }
+            HSSFExcelObj hssfExcelObj = hssfExcelProcessor.parseExcelToObj(HSSFExcelObj.class);
+            System.out.println("hssfExcelObj = " + hssfExcelObj.getHssfRowObj().getColumn2());
         } catch (IOException e) {
             e.printStackTrace();
         }

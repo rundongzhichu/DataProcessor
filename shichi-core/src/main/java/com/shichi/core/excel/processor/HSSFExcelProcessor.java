@@ -15,6 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,7 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
         }
     }
 
-    public <R> R parseExcelRowToObj(HSSFSheet sheet, int currentRow, Class<R> rc) {
+    public <R> R parseExcelRowToObj(HSSFSheet sheet, int currentRow, Class<R> rc) throws Exception {
         HSSFRow row = sheet.getRow(currentRow);
         Field[] fields = rc.getDeclaredFields();
         Map<Integer, HSSFExcelCellResolver>  cellFields = new HashMap<>();
@@ -128,7 +129,7 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
             if(row == null || invalidRow(row)) return r;
             short firstCellNum = row.getFirstCellNum();
             short lastCellNum = row.getLastCellNum();
-            for (int i = firstCellNum; i <= lastCellNum; i++) {
+            for (int i = firstCellNum; i < lastCellNum; i++) {
                 HSSFExcelCellResolver hssfExcelCellResolver = cellFields.get(i);
                 Cell cell = row.getCell(i);
                 String value = valueCheck(cell, hssfExcelCellResolver.getCa().isMust());
@@ -144,8 +145,65 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
             logger.error("no such method.", e);
         } catch (Exception e) {
             logger.error("error occurs.", e);
+            throw e;
         }
         return r;
+    }
+
+    public E parseExcelToObj(Class<E> excelObj) {
+        int activeSheet = workbook.getActiveSheetIndex();
+        HSSFSheet sheet = workbook.getSheetAt(activeSheet);
+
+        int currentRow = 0;
+        E excel = null;
+        try {
+            Field[] fields = excelObj.getDeclaredFields();
+            excel = excelObj.getConstructor().newInstance();
+            for (Field field :
+                    fields) {
+                ReflectUtils.setAccessible(field, true);
+                ERows eRows = ReflectUtils.getAnnonation(field, ERows.class);
+                if(eRows != null) {
+                    HSSFExcelRowsResolver hssfExcelRowsResolver = new HSSFExcelRowsResolver(excel, field, eRows);
+                    Class rowType = eRows.rowType();
+                    List rows = parseExcelRowsToObjs(sheet, currentRow, rowType);
+                    hssfExcelRowsResolver.setFieldValue(excel, rows);
+                    currentRow += rows.size();
+                }
+
+                ERow eRow = ReflectUtils.getAnnonation(field, ERow.class);
+                if(eRow != null) {
+                    HSSFExcelRowResolver hssfExcelRowResolver = new HSSFExcelRowResolver(excel, field, eRow);
+                    Object row = parseExcelRowToObj(sheet, currentRow, field.getType());
+                    hssfExcelRowResolver.setFieldValue(excel, row);
+                    currentRow++;
+                }
+            }
+        } catch (InstantiationException e) {
+            logger.error("can not instantiate a instance.", e);
+        } catch (IllegalAccessException e) {
+            logger.error("can not access the field.", e);
+        } catch (InvocationTargetException e) {
+            logger.error("can not invoke method.", e);
+        } catch (NoSuchMethodException e) {
+            logger.error("no such method.", e);
+        } catch (Exception e) {
+            logger.error("error occurs.", e);
+        }
+        return excel;
+    }
+
+    public <R> List<R> parseExcelRowsToObjs(HSSFSheet sheet, int curentRow, Class<R> rc) {
+        int lastRowNum = sheet.getLastRowNum();
+        List<R> objs = new ArrayList<>();
+        try {
+            for (int i = curentRow; i <= lastRowNum; i++) {
+                objs.add(parseExcelRowToObj(sheet, i, rc));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return objs;
     }
 
     public <R> List<R> parseExcelRowsToObjs(Class<R> rc) {
@@ -155,8 +213,12 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
         int firstRowNum = sheet.getFirstRowNum();
         int lastRowNum = sheet.getLastRowNum();
         List<R> objs = new ArrayList<>();
-        for (int i = firstRowNum; i <= lastRowNum; i++) {
-            objs.add(parseExcelRowToObj(sheet, i, rc));
+        try {
+            for (int i = firstRowNum; i <= lastRowNum; i++) {
+                objs.add(parseExcelRowToObj(sheet, i, rc));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
         return objs;
     }

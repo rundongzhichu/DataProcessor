@@ -13,7 +13,7 @@ public class HSSFExcelObj {
     @ERow
     private HSSFRowObj hssfRowObj;
 
-    @ERows
+    @ERows(rowType = HSSFRowObj.class)
     private List<HSSFRowObj> hssfRowObjs;
 
     public HSSFRowObj getHssfRowObj() {
