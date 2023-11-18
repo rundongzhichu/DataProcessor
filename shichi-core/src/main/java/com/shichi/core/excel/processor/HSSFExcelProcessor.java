@@ -18,9 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,15 +39,25 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
         workbook = new HSSFWorkbook();
     }
 
+    public HSSFExcelProcessor(String filePath) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        workbook = new HSSFWorkbook(fileInputStream);
+    }
+
     public HSSFWorkbook getWorkbook() {
         return workbook;
     }
 
-    public <E> void parseRowModelObjToHSSFExcel(E excel) {
+    public void parseRowModelObjToHSSFExcel() {
+        parseRowModelObjToHSSFExcel(this.e);
+    }
+
+    public void parseRowModelObjToHSSFExcel(E excel) {
         Field[] fields = excel.getClass().getDeclaredFields();
         try {
             for (Field field :
                     fields) {
+                ReflectUtils.setAccessible(field, true);
                 ERows eRows = ReflectUtils.getAnnonation(field, ERows.class);
                 if(eRows != null) {
                     HSSFExcelRowsResolver hssfExcelRowsResolver = new HSSFExcelRowsResolver(excel, field, eRows);
@@ -89,10 +97,12 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
 
     public <R> void parseRowObjsToExcel(List<R> rowObjs, boolean newSheet) {
         if (CollectionUtils.isEmpty(rowObjs)) throw new NullPointerException("Empty Object List!");
-        int activeSheet = workbook.getActiveSheetIndex();
-        HSSFSheet sheet = workbook.getSheetAt(activeSheet);
-        if(newSheet) {
+        HSSFSheet sheet = null;
+        if(newSheet || workbook.getNumberOfSheets() == 0) {
             sheet = workbook.createSheet();
+        } else {
+            int activeSheet = workbook.getActiveSheetIndex();
+            sheet = workbook.getSheetAt(activeSheet);
         }
         int lastRowNum = sheet.getLastRowNum();
         for (int i = 0, size = rowObjs.size(); i < size; i++) {
@@ -118,7 +128,7 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
             if(row == null || invalidRow(row)) return r;
             short firstCellNum = row.getFirstCellNum();
             short lastCellNum = row.getLastCellNum();
-            for (int i = firstCellNum; i < lastCellNum; i++) {
+            for (int i = firstCellNum; i <= lastCellNum; i++) {
                 HSSFExcelCellResolver hssfExcelCellResolver = cellFields.get(i);
                 Cell cell = row.getCell(i);
                 String value = valueCheck(cell, hssfExcelCellResolver.getCa().isMust());
@@ -145,38 +155,45 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
         int firstRowNum = sheet.getFirstRowNum();
         int lastRowNum = sheet.getLastRowNum();
         List<R> objs = new ArrayList<>();
-        for (int i = firstRowNum; i < lastRowNum; i++) {
+        for (int i = firstRowNum; i <= lastRowNum; i++) {
             objs.add(parseExcelRowToObj(sheet, i, rc));
         }
         return objs;
     }
 
     public void saveToFile(String filePath) {
+        FileOutputStream fileOutputStream = null;
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            fileOutputStream = new FileOutputStream(new File(filePath));
             workbook.write(fileOutputStream);
+            fileOutputStream.flush();
         } catch (FileNotFoundException e) {
             logger.error("Can not find the file!", e);
         } catch (IOException e) {
             logger.error("IO Exception occurs!", e);
+        } finally {
+            try {
+                fileOutputStream.close();
+            } catch (IOException ioException) {
+                logger.error("IO Exception occurs when close file outputstream!", e);
+            }
         }
     }
 
     private boolean invalidRow(Row row) {
         try {
-            if (row == null) return false;
+            if (row == null) return true;
             short firstCellNum = row.getFirstCellNum();
             short lastCellNum = row.getLastCellNum();
-            if (firstCellNum < 0 && lastCellNum < 0) return false;
+            if (firstCellNum < 0 && lastCellNum < 0) return true;
             if (firstCellNum != 0) {
                 for (short i = firstCellNum; i < lastCellNum; i++) {
                     Cell cell = row.getCell(i);
                     String cellValue = cell.getStringCellValue();
-                    if (!StringUtils.isBlank(cellValue)) return true;
+                    if (StringUtils.isBlank(cellValue)) return true;
                 }
-                return false;
             }
-            return true;
+            return false;
         } catch (Exception e) {
             logger.error("an error occurs.", e);
             return true;

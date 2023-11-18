@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(value= {ElementType.TYPE, ElementType.FIELD})
 public @interface Excel {
     ExcelType type() default ExcelType.XSSF;
 }
