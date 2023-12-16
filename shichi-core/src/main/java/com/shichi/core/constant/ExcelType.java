@@ -1,4 +1,4 @@
-package com.shichi.core.excel.constant;
+package com.shichi.core.constant;
 
 public enum ExcelType {
     XSSF,HSSF

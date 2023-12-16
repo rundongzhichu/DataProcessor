@@ -3,7 +3,7 @@ package com.shichi.core.excel.processor;
 import com.shichi.core.excel.anno.ERow;
 import com.shichi.core.excel.anno.ERows;
 import com.shichi.core.excel.anno.Excel;
-import com.shichi.core.excel.constant.ExcelType;
+import com.shichi.core.constant.ExcelType;
 
 import java.util.List;
 

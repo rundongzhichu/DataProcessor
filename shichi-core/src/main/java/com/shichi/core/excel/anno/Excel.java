@@ -1,6 +1,6 @@
 package com.shichi.core.excel.anno;
 
-import com.shichi.core.excel.constant.ExcelType;
+import com.shichi.core.constant.ExcelType;
 
 import java.lang.annotation.*;
 

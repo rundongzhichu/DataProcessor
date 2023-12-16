@@ -48,11 +48,11 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
         return workbook;
     }
 
-    public void parseRowModelObjToHSSFExcel() {
-        parseRowModelObjToHSSFExcel(this.e);
+    public void parseRowModelObjToExcel() {
+        parseRowModelObjToExcel(this.e);
     }
 
-    public void parseRowModelObjToHSSFExcel(E excel) {
+    public void parseRowModelObjToExcel(E excel) {
         Field[] fields = excel.getClass().getDeclaredFields();
         try {
             for (Field field :

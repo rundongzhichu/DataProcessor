@@ -25,7 +25,7 @@ public class HSSFExcelProcessorTests {
     @Test
     public void testHssfExcelProcessor() {
         HSSFExcelProcessor hssfExcelProcessor = new HSSFExcelProcessor<>(hssfExcelObj);
-        hssfExcelProcessor.parseRowModelObjToHSSFExcel();
+        hssfExcelProcessor.parseRowModelObjToExcel();
         hssfExcelProcessor.saveToFile("test.xlsx");
     }
 
