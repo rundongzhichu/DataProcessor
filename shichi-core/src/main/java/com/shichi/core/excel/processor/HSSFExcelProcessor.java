@@ -60,7 +60,6 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
                 ReflectUtils.setAccessible(field, true);
                 ERows eRows = ReflectUtils.getAnnonation(field, ERows.class);
                 if(eRows != null) {
-                    HSSFExcelRowsResolver hssfExcelRowsResolver = new HSSFExcelRowsResolver(excel, field, eRows);
                     Object rowsObj = field.get(excel);
                     assert rowsObj instanceof List;
                     parseRowObjsToExcel((List)rowsObj, false);
@@ -68,7 +67,6 @@ public class HSSFExcelProcessor<E> extends DefaultExcelProcessor<E> {
 
                 ERow eRow = ReflectUtils.getAnnonation(field, ERow.class);
                 if(eRow != null) {
-                    HSSFExcelRowResolver hssfExcelRowResolver = new HSSFExcelRowResolver(excel, field, eRow);
                     Object rowObj = field.get(excel);
                     parseRowObjsToExcel(List.of(rowObj), false);
                 }

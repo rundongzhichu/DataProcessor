@@ -7,4 +7,8 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 public @interface Table {
 
+    int row() default 1;
+
+    int col() default 1;
+
 }

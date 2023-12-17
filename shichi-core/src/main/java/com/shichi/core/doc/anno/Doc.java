@@ -11,6 +11,8 @@ public @interface Doc {
 
     DocType type() default DocType.DOCX;
 
-    String path();
+    String path() default "";
+
+    String outputPath() default "";
 
 }

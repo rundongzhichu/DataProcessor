@@ -17,6 +17,7 @@
 
     <properties>
         <poi.version>5.2.0</poi.version>
+        <cglib.version>3.3.0</cglib.version>
     </properties>
     <dependencies>
         <!-- poi dependency	-->
@@ -29,6 +30,13 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
+        </dependency>
+
+        <!--    CGLib dependency    -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${cglib.version}</version>
         </dependency>
 
     </dependencies>
