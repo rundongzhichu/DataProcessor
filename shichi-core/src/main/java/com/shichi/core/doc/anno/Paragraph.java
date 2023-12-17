@@ -5,6 +5,11 @@ import org.apache.poi.xwpf.usermodel.VerticalAlign;
 
 import java.lang.annotation.*;
 
+/**
+ * @author shoucai
+ *
+ *
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

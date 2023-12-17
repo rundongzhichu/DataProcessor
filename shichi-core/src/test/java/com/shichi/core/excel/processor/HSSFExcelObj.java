@@ -31,4 +31,5 @@ public class HSSFExcelObj {
     public void setHssfRowObjs(List<HSSFRowObj> hssfRowObjs) {
         this.hssfRowObjs = hssfRowObjs;
     }
+
 }
