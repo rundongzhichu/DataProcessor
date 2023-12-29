@@ -7,6 +7,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ECell {
+
     String name();
 
     int width() default 6000;
@@ -14,7 +15,6 @@ public @interface ECell {
     int index() default -1;
 
     boolean isMust() default false;
-
 
 
 }

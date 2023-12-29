@@ -1,6 +1,7 @@
 package com.shichi.core.doc.processor;
 
 import com.shichi.core.doc.anno.Paragraph;
+import com.shichi.core.doc.processor.api.AbstractDocFileProcessor;
 import com.shichi.core.doc.resolver.XWPFParagraphResolver;
 import com.shichi.core.utils.ReflectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.reflect.Field;
 
-public class XWPFDocFileProcessor<D> extends DefaultDocFileProcessor<D> {
+public class XWPFDocFileProcessor<D> extends AbstractDocFileProcessor<D> {
 
     Logger logger = LoggerFactory.getLogger(XWPFDocFileProcessor.class);
 

@@ -1,6 +1,8 @@
 package com.shichi.core.doc.processor;
 
-public class HWPFDocFileProcessor<D> extends DefaultDocFileProcessor<D> {
+import com.shichi.core.doc.processor.api.AbstractDocFileProcessor;
+
+public class HWPFDocFileProcessor<D> extends AbstractDocFileProcessor<D> {
 
     private D d;
 

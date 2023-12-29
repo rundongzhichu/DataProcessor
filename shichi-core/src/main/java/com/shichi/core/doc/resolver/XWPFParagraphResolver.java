@@ -2,60 +2,45 @@ package com.shichi.core.doc.resolver;
 
 import com.shichi.core.doc.anno.Paragraph;
 import com.shichi.core.doc.model.XWPFParagraphModel;
+import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
  * @author shoucai
  */
-public class XWPFParagraphResolver<O, PF extends Field, PA extends Paragraph>  {
+public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> extends AbstractXWPFResolver<C, O, F, A> {
 
     Logger logger = LoggerFactory.getLogger(XWPFParagraphResolver.class);
 
-    private XWPFDocument xwpfDocument;
-
-    private O o;
-
-    private PF pf;
-
-    private PA pa;
-
-    public XWPFParagraphResolver(XWPFDocument xwpfDocument, O o, PF pf, PA pa) {
-        Assert.notNull(xwpfDocument, "xwpfDocument should not be null!");
-        Assert.notNull(o, "Doc Object should not Be Null!");
-        Assert.notNull(pf, "Paragraph Field Object should not Be Null!");
-        Assert.notNull(pa, "Paragraph Annotation should not Be Null!");
-        this.xwpfDocument = xwpfDocument;
-        this.o = o;
-        this.pf = pf;
-        this.pa = pa;
+    public XWPFParagraphResolver(C c, O o, F f, A a) {
+        super(c, o, f, a);
     }
 
+    @Override
     public void resolve() {
         resolve(getFieldValue());
     }
 
     public void resolve(Object paragraph) {
-        if(paragraph == null) return;
-        if(paragraph instanceof String) {
+        if (paragraph == null) return;
+        if (paragraph instanceof String) {
             processFormatStrParagraph((String) paragraph);
         } else if (paragraph instanceof XWPFParagraphModel) {
             processXWPFParagraphModel((XWPFParagraphModel) paragraph);
-        } else if(paragraph instanceof List) {
-            for (Object seg : (List)paragraph) {
+        } else if (paragraph instanceof List) {
+            for (Object seg : (List) paragraph) {
                 resolve(seg);
             }
         }
     }
 
     private void processXWPFParagraphModel(XWPFParagraphModel xwpfParagraphModel) {
-        XWPFParagraph xwpfParagraph = xwpfDocument.createParagraph();
+        XWPFParagraph xwpfParagraph = createParagraph();
         setBorders(xwpfParagraph, xwpfParagraphModel, xwpfParagraphModel.isAnnoFirst());
 
         XWPFRun xwpfRun = xwpfParagraph.createRun();
@@ -63,8 +48,8 @@ public class XWPFParagraphResolver<O, PF extends Field, PA extends Paragraph>  {
         xwpfRun.setText(xwpfParagraph.getText());
     }
 
-    private void processFormatStrParagraph(String text){
-        XWPFParagraph xwpfParagraph = xwpfDocument.createParagraph();
+    private void processFormatStrParagraph(String text) {
+        XWPFParagraph xwpfParagraph = createParagraph();
         setBorders(xwpfParagraph);
 
         XWPFRun xwpfRun = xwpfParagraph.createRun();
@@ -72,12 +57,12 @@ public class XWPFParagraphResolver<O, PF extends Field, PA extends Paragraph>  {
         xwpfRun.setText(text);
     }
 
-    private void setFont(XWPFRun xwpfRun) {
-        xwpfRun.setBold(pa.bold());
-        xwpfRun.setItalic(pa.italic());
-        xwpfRun.setStrikeThrough(pa.strikeThrough());
-        xwpfRun.setTextPosition(pa.textPosition());
-        xwpfRun.setFontSize(pa.fontSize());
+    protected void setFont(XWPFRun xwpfRun) {
+        xwpfRun.setBold(a.bold());
+        xwpfRun.setItalic(a.italic());
+        xwpfRun.setStrikeThrough(a.strikeThrough());
+        xwpfRun.setTextPosition(a.textPosition());
+        xwpfRun.setFontSize(a.fontSize());
     }
 
     private void setBorders(XWPFParagraph xwpfParagraph) {
@@ -85,26 +70,26 @@ public class XWPFParagraphResolver<O, PF extends Field, PA extends Paragraph>  {
     }
 
     private void setBorders(XWPFParagraph xwpfParagraph, XWPFParagraphModel xwpfParagraphModel, boolean annoFirst) {
-        if(!annoFirst  && xwpfParagraphModel != null) {
+        if (!annoFirst && xwpfParagraphModel != null) {
             setBorders(xwpfParagraph, xwpfParagraphModel.getBorders());
             return;
         }
 
-        setBorders(xwpfParagraph, pa.borders());
-        if(pa.borderTop() != null) {
-            xwpfParagraph.setBorderTop(pa.borderTop());
+        setBorders(xwpfParagraph, a.borders());
+        if (a.borderTop() != null) {
+            xwpfParagraph.setBorderTop(a.borderTop());
         }
-        if(pa.borderBottom() != null) {
-            xwpfParagraph.setBorderBottom(pa.borderBottom());
+        if (a.borderBottom() != null) {
+            xwpfParagraph.setBorderBottom(a.borderBottom());
         }
-        if(pa.borderLeft() != null) {
-            xwpfParagraph.setBorderLeft(pa.borderLeft());
+        if (a.borderLeft() != null) {
+            xwpfParagraph.setBorderLeft(a.borderLeft());
         }
-        if(pa.borderRight() != null) {
-            xwpfParagraph.setBorderRight(pa.borderRight());
+        if (a.borderRight() != null) {
+            xwpfParagraph.setBorderRight(a.borderRight());
         }
-        if(pa.borderBetween() != null) {
-            xwpfParagraph.setBorderBetween(pa.borderBetween());
+        if (a.borderBetween() != null) {
+            xwpfParagraph.setBorderBetween(a.borderBetween());
         }
     }
 
@@ -117,28 +102,14 @@ public class XWPFParagraphResolver<O, PF extends Field, PA extends Paragraph>  {
         xwpfParagraph.setBorderBetween(bordersLen > 4 ? borders[4] : Borders.NONE);
     }
 
-    public Object getFieldValue() {
-        if(pf.getModifiers() != Modifier.PUBLIC) {
-            pf.setAccessible(true);
-        }
-        try {
-            return pf.get(o);
-        } catch (IllegalAccessException e) {
-            logger.error("Can not get vaule", e);
-        }
+    private XWPFParagraph createParagraph() {
+        if (c instanceof XWPFHeader)
+            return ((XWPFHeader) c).createParagraph();
+        else if (c instanceof XWPFDocument)
+            return ((XWPFDocument) c).createParagraph();
+        else
+            logger.error("Unsupported XWPF Container type!");
         return null;
-    }
-
-
-    public void setFieldValue(Object value) {
-        if(pf.getModifiers() != Modifier.PUBLIC) {
-            pf.setAccessible(true);
-        }
-        try {
-            pf.set(o, pf.getType().cast(value));
-        } catch (IllegalAccessException e) {
-            logger.error("Can not set value", e);
-        }
     }
 
 }
