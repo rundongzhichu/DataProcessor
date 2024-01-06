@@ -6,6 +6,8 @@ public class XWPFTableModel {
 
     private int col;
 
+    private boolean fixed;
+
     private boolean annoFirst;
 
     public int getRow() {
@@ -22,6 +24,14 @@ public class XWPFTableModel {
 
     public void setCol(int col) {
         this.col = col;
+    }
+
+    public boolean isFixed() {
+        return fixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
     }
 
     public boolean isAnnoFirst() {
