@@ -18,7 +18,7 @@ public class XWPFParagraphModel {
     private int fontSize;
     private VerticalAlign verticalAlign;
     private String text;
-    private boolean annoFirst;
+    private boolean annoFirst = false;
 
     public Borders[] getBorders() {
         return borders;

@@ -1,29 +1,49 @@
 package com.shichi.core.doc.model;
 
+import java.util.List;
+
 public class XWPFTableModel {
 
-    private int row;
+    /**
+     * 表格有多少行
+     */
+    private int rowCnt;
 
-    private int col;
+    /**
+     * 表格有多少列
+     */
+    private int colCnt;
 
+    /**
+     * 标识表格的长宽是否固定
+     */
     private boolean fixed;
 
-    private boolean annoFirst;
+    /**
+     * 是否优先采用注解提供的配置
+     */
+    private boolean annoFirst = false;
 
-    public int getRow() {
-        return row;
+
+    /**
+     * 数据行的配置
+     */
+    private List<XWPFTableRowModel> rows;
+
+    public int getRowCnt() {
+        return rowCnt;
     }
 
-    public void setRow(int row) {
-        this.row = row;
+    public void setRowCnt(int rowCnt) {
+        this.rowCnt = rowCnt;
     }
 
-    public int getCol() {
-        return col;
+    public int getColCnt() {
+        return colCnt;
     }
 
-    public void setCol(int col) {
-        this.col = col;
+    public void setColCnt(int colCnt) {
+        this.colCnt = colCnt;
     }
 
     public boolean isFixed() {

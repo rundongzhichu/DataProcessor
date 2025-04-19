@@ -6,6 +6,7 @@ import com.shichi.core.doc.model.XWPFParagraphModel;
 import com.shichi.core.doc.model.XWPFTableRowModel;
 import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import com.shichi.core.doc.resolver.api.Resolver;
+import com.shichi.core.utils.ReflectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
@@ -28,12 +29,26 @@ public class XWPFRowResolver<C extends XWPFTable, O, F extends Field, A extends 
         if (rowObj == null) return;
         if (rowObj instanceof XWPFTableRowModel) {
             processXWPFTableRowModel((XWPFTableRowModel) rowObj);
-        } else if (rowObj instanceof List) {
-            for (XWPFTableRowModel row : (List<XWPFTableRowModel>) rowObj) {
-                resolve(row);
+        } else {
+            process(rowObj);
+        }
+    }
+
+    private void process(Object obj) {
+        XWPFTableRow xwpfTableRow = c.createRow();
+        Field[] fields = obj.getClass().getFields();
+        for (Field field: fields) {
+            Annotation[] annotations = field.getDeclaredAnnotations();
+            for (Annotation annotation : annotations) {
+                Resolver resolver = null;
+                if (annotation instanceof Cell) {
+                    resolver = new XWPFCellResolver(xwpfTableRow, obj, field, (Cell) annotation);
+                }
+                if (resolver != null) resolver.resolve();
             }
         }
     }
+
 
     public void processXWPFTableRowModel(XWPFTableRowModel xwpfTableRowModel) {
         XWPFTableRow xwpfTableRow = c.createRow();

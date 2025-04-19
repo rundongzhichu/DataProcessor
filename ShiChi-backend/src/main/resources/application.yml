@@ -3,3 +3,18 @@ spring:
     name: Shichi
     version: 1.0.0-SNAPSHOT
     description: This is a project for Shichi story
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 1234567
+    h2:
+      console:
+        enabled: true  # 启用 H2 控制台（可选）
+
+# 配置springdoc文档路径
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

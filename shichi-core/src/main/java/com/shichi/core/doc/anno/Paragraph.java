@@ -12,7 +12,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD})
 public @interface Paragraph {
 
     Borders[] borders() default {Borders.NONE, Borders.NONE, Borders.NONE, Borders.NONE, Borders.NONE};

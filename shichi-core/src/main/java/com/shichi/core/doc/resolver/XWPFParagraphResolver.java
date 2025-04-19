@@ -36,9 +36,15 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
             for (Object seg : (List) paragraph) {
                 resolve(seg);
             }
+        } else {
+
         }
     }
 
+    /**
+     * 更具配置对象xwpfParagraphModel设置段落
+     * @param xwpfParagraphModel
+     */
     private void processXWPFParagraphModel(XWPFParagraphModel xwpfParagraphModel) {
         XWPFParagraph xwpfParagraph = createParagraph();
         setBorders(xwpfParagraph, xwpfParagraphModel, xwpfParagraphModel.isAnnoFirst());
@@ -57,6 +63,10 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         xwpfRun.setText(text);
     }
 
+    /**
+     * 设置段落字体
+     * @param xwpfRun
+     */
     protected void setFont(XWPFRun xwpfRun) {
         xwpfRun.setBold(a.bold());
         xwpfRun.setItalic(a.italic());
@@ -69,6 +79,12 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         setBorders(xwpfParagraph, null, true);
     }
 
+    /**
+     * 设置段落的边框
+     * @param xwpfParagraph
+     * @param xwpfParagraphModel
+     * @param annoFirst
+     */
     private void setBorders(XWPFParagraph xwpfParagraph, XWPFParagraphModel xwpfParagraphModel, boolean annoFirst) {
         if (!annoFirst && xwpfParagraphModel != null) {
             setBorders(xwpfParagraph, xwpfParagraphModel.getBorders());
@@ -93,6 +109,11 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         }
     }
 
+    /**
+     * 设置段落的边框
+     * @param xwpfParagraph
+     * @param borders
+     */
     private void setBorders(XWPFParagraph xwpfParagraph, Borders[] borders) {
         int bordersLen = borders.length;
         xwpfParagraph.setBorderTop(bordersLen > 0 ? borders[0] : Borders.NONE);

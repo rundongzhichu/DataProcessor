@@ -9,6 +9,14 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 import java.lang.reflect.Field;
 
+/**
+ * word文档单元格的设置
+ *
+ * @param <C>
+ * @param <O>
+ * @param <F>
+ * @param <A>
+ */
 public class XWPFCellResolver<C extends XWPFTableRow, O extends XWPFTableRowModel, F extends Field, A extends Cell> extends AbstractXWPFResolver<C, O, F, A> {
 
 
