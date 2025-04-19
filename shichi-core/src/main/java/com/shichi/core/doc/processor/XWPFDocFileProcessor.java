@@ -1,14 +1,19 @@
 package com.shichi.core.doc.processor;
 
 import com.shichi.core.doc.anno.Paragraph;
+import com.shichi.core.doc.anno.Table;
 import com.shichi.core.doc.processor.api.AbstractDocFileProcessor;
 import com.shichi.core.doc.resolver.XWPFParagraphResolver;
+import com.shichi.core.doc.resolver.XWPFTableResolver;
+import com.shichi.core.doc.resolver.api.Resolver;
 import com.shichi.core.utils.ReflectUtils;
+import org.apache.poi.ss.formula.atp.Switch;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 public class XWPFDocFileProcessor<D> extends AbstractDocFileProcessor<D> {
@@ -46,9 +51,18 @@ public class XWPFDocFileProcessor<D> extends AbstractDocFileProcessor<D> {
         Field[] fields = docObj.getClass().getDeclaredFields();
         for (Field field :
                 fields) {
-            Paragraph paragraph = ReflectUtils.getAnnonation(field, Paragraph.class);
-            XWPFParagraphResolver XWPFParagraphResolver = new XWPFParagraphResolver(xwpfDocument, docObj, field, paragraph);
-            XWPFParagraphResolver.resolve();
+            for (Annotation anno:
+                 field.getDeclaredAnnotations()) {
+                Resolver resolver = null;
+                if(anno instanceof Paragraph) {
+                    resolver = new XWPFParagraphResolver(xwpfDocument, docObj, field, (Paragraph) anno);
+                } else if(anno instanceof Table) {
+                    resolver = new XWPFTableResolver(xwpfDocument, docObj, field, (Table) anno);
+                }
+                if(resolver != null) {
+                    resolver.resolve();
+                }
+            }
         }
     }
 

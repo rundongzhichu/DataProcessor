@@ -69,7 +69,6 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
         else {
             xwpfTable = c.createTable();
         }
-        process(xwpfTable);
 
         Field[] fields = table.getClass().getDeclaredFields();
         for (Field field :
