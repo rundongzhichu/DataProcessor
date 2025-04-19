@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value= {ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Table {
 
     boolean fixed() default false;

@@ -1,7 +1,6 @@
 package com.shichi.core.doc.resolver;
 
 import com.shichi.core.doc.anno.Paragraph;
-import com.shichi.core.doc.model.XWPFParagraphModel;
 import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
@@ -30,28 +29,11 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         if (paragraph == null) return;
         if (paragraph instanceof String) {
             processFormatStrParagraph((String) paragraph);
-        } else if (paragraph instanceof XWPFParagraphModel) {
-            processXWPFParagraphModel((XWPFParagraphModel) paragraph);
         } else if (paragraph instanceof List) {
             for (Object seg : (List) paragraph) {
                 resolve(seg);
             }
-        } else {
-
         }
-    }
-
-    /**
-     * 更具配置对象xwpfParagraphModel设置段落
-     * @param xwpfParagraphModel
-     */
-    private void processXWPFParagraphModel(XWPFParagraphModel xwpfParagraphModel) {
-        XWPFParagraph xwpfParagraph = createParagraph();
-        setBorders(xwpfParagraph, xwpfParagraphModel, xwpfParagraphModel.isAnnoFirst());
-
-        XWPFRun xwpfRun = xwpfParagraph.createRun();
-        setFont(xwpfRun);
-        xwpfRun.setText(xwpfParagraph.getText());
     }
 
     private void processFormatStrParagraph(String text) {
@@ -75,22 +57,11 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         xwpfRun.setFontSize(a.fontSize());
     }
 
-    private void setBorders(XWPFParagraph xwpfParagraph) {
-        setBorders(xwpfParagraph, null, true);
-    }
-
     /**
      * 设置段落的边框
      * @param xwpfParagraph
-     * @param xwpfParagraphModel
-     * @param annoFirst
      */
-    private void setBorders(XWPFParagraph xwpfParagraph, XWPFParagraphModel xwpfParagraphModel, boolean annoFirst) {
-        if (!annoFirst && xwpfParagraphModel != null) {
-            setBorders(xwpfParagraph, xwpfParagraphModel.getBorders());
-            return;
-        }
-
+    private void setBorders(XWPFParagraph xwpfParagraph) {
         setBorders(xwpfParagraph, a.borders());
         if (a.borderTop() != null) {
             xwpfParagraph.setBorderTop(a.borderTop());
@@ -124,11 +95,15 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
     }
 
     private XWPFParagraph createParagraph() {
-        if (c instanceof XWPFHeader)
+        if (c instanceof XWPFHeader) {
+
             return ((XWPFHeader) c).createParagraph();
-        else if (c instanceof XWPFDocument)
+        }
+        else if (c instanceof XWPFDocument) {
             return ((XWPFDocument) c).createParagraph();
-        else
+        } else if (c instanceof XWPFTableCell){
+            return ((XWPFTableCell) c).addParagraph();
+        } else
             logger.error("Unsupported XWPF Container type!");
         return null;
     }
