@@ -15,10 +15,10 @@
         <module>dp-backend</module>
     </modules>
 
-    <groupId>com.shichi.history</groupId>
+    <groupId>com.dp</groupId>
     <artifactId>DataProcessor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ShihChi</name>
+    <name>DataProcessor</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

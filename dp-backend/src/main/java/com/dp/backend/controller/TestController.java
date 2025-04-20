@@ -1,4 +1,4 @@
-package com.shichi.history.controller;
+package com.dp.backend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

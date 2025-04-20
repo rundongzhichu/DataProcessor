@@ -1,6 +1,6 @@
-package com.shichi.history.dao.api;
+package com.dp.backend.dao.api;
 
-import com.shichi.history.dao.bean.TestBean;
+import com.dp.backend.dao.bean.TestBean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

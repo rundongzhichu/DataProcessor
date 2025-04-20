@@ -1,4 +1,4 @@
-package com.shichi.history.dao.bean;
+package com.dp.backend.dao.bean;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
