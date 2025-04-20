@@ -11,9 +11,8 @@ public abstract class AbstractXWPFResolver<C, O, F extends Field, A> extends Abs
 
     public AbstractXWPFResolver(C c, O o, F f, A a) {
         Assert.notNull(c, "container object should not be null!");
-        Assert.notNull(o, "Doc Object should not Be Null!");
-        Assert.notNull(f, "Paragraph Field Object should not Be Null!");
-        Assert.notNull(a, "Paragraph Annotation should not Be Null!");
+        Assert.notNull(o, "Object should not Be Null!");
+        Assert.notNull(a, "Annotation should not Be Null!");
         this.c = c;
         this.o = o;
         this.f = f;

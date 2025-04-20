@@ -5,8 +5,6 @@ import com.shichi.core.doc.anno.Rows;
 import com.shichi.core.doc.anno.Table;
 import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import com.shichi.core.doc.resolver.api.Resolver;
-import com.shichi.core.doc.style.TableBordersStrategy;
-import com.shichi.core.doc.style.TableStyle;
 import com.shichi.core.utils.ReflectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
@@ -42,12 +40,8 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
      * @param rows
      */
     private void process(List<?> rows) {
-        XWPFTable xwpfTable = null;
-        if(a.fixed()) {
-            xwpfTable = c.createTable(a.row(), a.col());
-        } else {
-            xwpfTable = c.createTable();
-        }
+        XWPFTable xwpfTable = c.createTable();
+
 
         if(!rows.isEmpty()) {
             for (int i = 0; i < rows.size(); i++) {
@@ -66,13 +60,8 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
      * @param table
      */
     private void process(Object table) {
-        XWPFTable xwpfTable = null;
-        if(a.fixed()) {
-            xwpfTable = c.createTable(a.row(), a.col());
-        }
-        else {
-            xwpfTable = c.createTable();
-        }
+        XWPFTable xwpfTable =  c.createTable();
+        xwpfTable.removeRow(0);
 
         Field[] fields = table.getClass().getDeclaredFields();
         for (Field field :
@@ -91,38 +80,47 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
     }
 
     private void setStyle(XWPFTable xwpfTable) {
+        String[] bordersConfig =  a.insideHBorder().split(",");
+        xwpfTable.setInsideHBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 内部水平边框
 
-        TableStyle.TableBorders borders;
-        borders = getTableBorders(a.insideHBorder(), TableStyle.TableBordersEnum.INSIDE_H_BORDER);
-        xwpfTable.setInsideHBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 内部水平边框
+        bordersConfig =  a.insideVBorder().split(",");
+        xwpfTable.setInsideVBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000");  // 内部垂直边框
 
-        borders = getTableBorders(a.insideVBorder(), TableStyle.TableBordersEnum.INSIDE_V_BORDER);
-        xwpfTable.setInsideVBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 内部垂直边框
+        bordersConfig =  a.borderTop().split(",");
+        xwpfTable.setTopBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 上边框
 
-        borders= getTableBorders(a.borderTop(), TableStyle.TableBordersEnum.BORDER_TOP);
-        xwpfTable.setTopBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 上边框
+        bordersConfig =  a.borderBottom().split(",");
+        xwpfTable.setBottomBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 下边框
 
-        borders= getTableBorders(a.borderBottom(), TableStyle.TableBordersEnum.BORDER_BOTTOM);
-        xwpfTable.setBottomBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 下边框
+        bordersConfig =  a.borderLeft().split(",");
+        xwpfTable.setLeftBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 左边框
 
-        borders= getTableBorders(a.borderLeft(), TableStyle.TableBordersEnum.BORDER_LEFT);
-        xwpfTable.setLeftBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 左边框
+        bordersConfig =  a.borderRight().split(",");
+        xwpfTable.setRightBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 右边框
 
-        borders= getTableBorders(a.borderRight(), TableStyle.TableBordersEnum.BORDER_RIGHT);
-        xwpfTable.setRightBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 右边框
-
-        borders= getTableBorders(a.borderBetween(), TableStyle.TableBordersEnum.BORDER_BETWEEN);
-        xwpfTable.setRightBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 右边框
-    }
-
-    private TableStyle.TableBorders getTableBorders(Class<? extends TableBordersStrategy> strategyClazz, TableStyle.TableBordersEnum bordersEnum) {
-        try {
-            return strategyClazz.newInstance().generate(bordersEnum);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        bordersConfig =  a.borderRight().split(",");
+        xwpfTable.setRightBorder(bordersConfig.length > 1 ? XWPFTable.XWPFBorderType.valueOf(bordersConfig[0].trim()) : XWPFTable.XWPFBorderType.NONE,
+                bordersConfig.length > 2 ? Integer.parseInt(bordersConfig[1].trim()) : 1,
+                bordersConfig.length > 3 ? Integer.parseInt(bordersConfig[2].trim()) : 0,
+                bordersConfig.length > 4 ? bordersConfig[3].trim() : "000000"); // 右边框
     }
 
 }

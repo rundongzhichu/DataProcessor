@@ -1,5 +1,7 @@
 package com.shichi.core.doc.anno;
 
+import org.apache.poi.xwpf.usermodel.TableRowHeightRule;
+
 import java.lang.annotation.*;
 
 @Documented
@@ -7,9 +9,13 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Row {
 
-    /**
-     * @return row num of the data, default value starts with o0
-     */
-    int row() default 0;
+    int height() default 5;
+
+    boolean canSplitRow() default  false;
+
+    TableRowHeightRule heightRule() default TableRowHeightRule.AUTO;
+
+    boolean repeatHeader() default false;
+
 
 }

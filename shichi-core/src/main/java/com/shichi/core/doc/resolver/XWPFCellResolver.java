@@ -47,6 +47,7 @@ public class XWPFCellResolver<C extends XWPFTableRow, O, F extends Field, A exte
 
     private void process(Object cell) {
         XWPFTableCell xwpfTableCell = c.createCell();
+        xwpfTableCell.removeParagraph(0);
         if(cell instanceof String){
             // cell 单元还可以放表格之类的其他对象
             // 如果cell字段附带了段落属性，那么就是用段落配置文字样式
@@ -55,9 +56,7 @@ public class XWPFCellResolver<C extends XWPFTableRow, O, F extends Field, A exte
                 XWPFParagraphResolver  paragraphResolver = new XWPFParagraphResolver(xwpfTableCell, cell, null, paragraph);
                 paragraphResolver.resolve(cell);
             } else {
-                XWPFParagraph xwpfParagraph = xwpfTableCell.addParagraph();
-                XWPFRun xwpfRun = xwpfParagraph.createRun();
-                xwpfRun.setText((String) cell);
+                xwpfTableCell.setText((String) cell);
             }
         } else {
             Field[] fields = cell.getClass().getDeclaredFields();
@@ -71,5 +70,14 @@ public class XWPFCellResolver<C extends XWPFTableRow, O, F extends Field, A exte
                 }
             }
         }
+        setStyle(xwpfTableCell);
     }
+
+    private void setStyle(XWPFTableCell xwpfTableCell) {
+        xwpfTableCell.setWidth(a.width());
+        xwpfTableCell.setWidthType(a.widthType());
+        xwpfTableCell.setVerticalAlignment(a.verticalAlignment());
+        xwpfTableCell.setColor(a.color());
+    }
+
 }

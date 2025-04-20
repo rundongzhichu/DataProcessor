@@ -5,6 +5,7 @@ import com.shichi.core.doc.anno.Cells;
 import com.shichi.core.doc.anno.Row;
 import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import com.shichi.core.doc.resolver.api.Resolver;
+import org.apache.poi.xwpf.usermodel.TableRowHeightRule;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
@@ -29,7 +30,12 @@ public class XWPFRowResolver<C extends XWPFTable, O, F extends Field, A extends 
 
     private void process(Object obj) {
         XWPFTableRow xwpfTableRow = c.createRow();
-        Field[] fields = obj.getClass().getFields();
+        // 清空所有的cell 重新添加
+        // 反向遍历并移除单元格（避免索引问题）
+        for (int i = xwpfTableRow.getTableCells().size() - 1; i >= 0; i--) {
+            xwpfTableRow.removeCell(i);
+        }
+        Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field: fields) {
             Annotation[] annotations = field.getDeclaredAnnotations();
             for (Annotation annotation : annotations) {
@@ -42,6 +48,14 @@ public class XWPFRowResolver<C extends XWPFTable, O, F extends Field, A extends 
                 if (resolver != null) resolver.resolve();
             }
         }
+        setStyle(xwpfTableRow);
+    }
+
+    private void setStyle(XWPFTableRow xwpfTableRow) {
+        xwpfTableRow.setRepeatHeader(a.repeatHeader());
+        xwpfTableRow.setHeightRule(a.heightRule());
+        xwpfTableRow.setHeight(a.height());
+        xwpfTableRow.setCantSplitRow(a.canSplitRow());
     }
 
 }

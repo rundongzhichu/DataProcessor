@@ -1,6 +1,7 @@
 package com.shichi.core.doc.anno;
 
 import org.apache.poi.xwpf.usermodel.Borders;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 
 import java.lang.annotation.*;
@@ -35,5 +36,7 @@ public @interface Paragraph {
     int fontSize() default 20;
 
     VerticalAlign verticalAlign() default VerticalAlign.BASELINE;
+
+    ParagraphAlignment paragraphAlignment() default ParagraphAlignment.CENTER;
 
 }

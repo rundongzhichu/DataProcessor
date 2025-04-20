@@ -38,10 +38,11 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
 
     private void processFormatStrParagraph(String text) {
         XWPFParagraph xwpfParagraph = createParagraph();
-        setParagraphStyle(xwpfParagraph);
+        xwpfParagraph.removeRun(0);
+        setStyle(xwpfParagraph);
 
         XWPFRun xwpfRun = xwpfParagraph.createRun();
-        setxwpfRunStyle(xwpfRun);
+        setStyle(xwpfRun);
         xwpfRun.setText(text);
     }
 
@@ -49,7 +50,7 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
      * 设置段落字体
      * @param xwpfRun
      */
-    protected void setxwpfRunStyle(XWPFRun xwpfRun) {
+    protected void setStyle(XWPFRun xwpfRun) {
         xwpfRun.setBold(a.bold());
         xwpfRun.setItalic(a.italic());
         xwpfRun.setStrikeThrough(a.strikeThrough());
@@ -61,12 +62,13 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
      * 设置段落的边框
      * @param xwpfParagraph
      */
-    private void setParagraphStyle(XWPFParagraph xwpfParagraph) {
+    private void setStyle(XWPFParagraph xwpfParagraph) {
         xwpfParagraph.setBorderTop(a.borderTop());
         xwpfParagraph.setBorderBottom(a.borderBottom());
         xwpfParagraph.setBorderLeft(a.borderLeft());
         xwpfParagraph.setBorderRight(a.borderRight());
         xwpfParagraph.setBorderBetween(a.borderBetween());
+        xwpfParagraph.setAlignment(a.paragraphAlignment());
     }
 
     private XWPFParagraph createParagraph() {
