@@ -38,10 +38,10 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
 
     private void processFormatStrParagraph(String text) {
         XWPFParagraph xwpfParagraph = createParagraph();
-        setBorders(xwpfParagraph);
+        setParagraphStyle(xwpfParagraph);
 
         XWPFRun xwpfRun = xwpfParagraph.createRun();
-        setFont(xwpfRun);
+        setxwpfRunStyle(xwpfRun);
         xwpfRun.setText(text);
     }
 
@@ -49,7 +49,7 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
      * 设置段落字体
      * @param xwpfRun
      */
-    protected void setFont(XWPFRun xwpfRun) {
+    protected void setxwpfRunStyle(XWPFRun xwpfRun) {
         xwpfRun.setBold(a.bold());
         xwpfRun.setItalic(a.italic());
         xwpfRun.setStrikeThrough(a.strikeThrough());
@@ -61,37 +61,12 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
      * 设置段落的边框
      * @param xwpfParagraph
      */
-    private void setBorders(XWPFParagraph xwpfParagraph) {
-        setBorders(xwpfParagraph, a.borders());
-        if (a.borderTop() != null) {
-            xwpfParagraph.setBorderTop(a.borderTop());
-        }
-        if (a.borderBottom() != null) {
-            xwpfParagraph.setBorderBottom(a.borderBottom());
-        }
-        if (a.borderLeft() != null) {
-            xwpfParagraph.setBorderLeft(a.borderLeft());
-        }
-        if (a.borderRight() != null) {
-            xwpfParagraph.setBorderRight(a.borderRight());
-        }
-        if (a.borderBetween() != null) {
-            xwpfParagraph.setBorderBetween(a.borderBetween());
-        }
-    }
-
-    /**
-     * 设置段落的边框
-     * @param xwpfParagraph
-     * @param borders
-     */
-    private void setBorders(XWPFParagraph xwpfParagraph, Borders[] borders) {
-        int bordersLen = borders.length;
-        xwpfParagraph.setBorderTop(bordersLen > 0 ? borders[0] : Borders.NONE);
-        xwpfParagraph.setBorderBottom(bordersLen > 1 ? borders[1] : Borders.NONE);
-        xwpfParagraph.setBorderLeft(bordersLen > 2 ? borders[2] : Borders.NONE);
-        xwpfParagraph.setBorderRight(bordersLen > 3 ? borders[3] : Borders.NONE);
-        xwpfParagraph.setBorderBetween(bordersLen > 4 ? borders[4] : Borders.NONE);
+    private void setParagraphStyle(XWPFParagraph xwpfParagraph) {
+        xwpfParagraph.setBorderTop(a.borderTop());
+        xwpfParagraph.setBorderBottom(a.borderBottom());
+        xwpfParagraph.setBorderLeft(a.borderLeft());
+        xwpfParagraph.setBorderRight(a.borderRight());
+        xwpfParagraph.setBorderBetween(a.borderBetween());
     }
 
     private XWPFParagraph createParagraph() {

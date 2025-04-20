@@ -14,9 +14,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Paragraph {
-
-    Borders[] borders() default {Borders.NONE, Borders.NONE, Borders.NONE, Borders.NONE, Borders.NONE};
-
     Borders borderTop() default Borders.NONE;
 
     Borders borderBottom() default Borders.NONE;

@@ -5,6 +5,8 @@ import com.shichi.core.doc.anno.Rows;
 import com.shichi.core.doc.anno.Table;
 import com.shichi.core.doc.resolver.api.AbstractXWPFResolver;
 import com.shichi.core.doc.resolver.api.Resolver;
+import com.shichi.core.doc.style.TableBordersStrategy;
+import com.shichi.core.doc.style.TableStyle;
 import com.shichi.core.utils.ReflectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
@@ -55,6 +57,8 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
                 resolver.resolve(row);
             }
         }
+
+        setStyle(xwpfTable);
     }
 
     /**
@@ -82,6 +86,42 @@ public class XWPFTableResolver<C extends XWPFDocument, O, F extends Field, A ext
                 }
                 if (resolver != null) resolver.resolve();
             }
+        }
+        setStyle(xwpfTable);
+    }
+
+    private void setStyle(XWPFTable xwpfTable) {
+
+        TableStyle.TableBorders borders;
+        borders = getTableBorders(a.insideHBorder(), TableStyle.TableBordersEnum.INSIDE_H_BORDER);
+        xwpfTable.setInsideHBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 内部水平边框
+
+        borders = getTableBorders(a.insideVBorder(), TableStyle.TableBordersEnum.INSIDE_V_BORDER);
+        xwpfTable.setInsideVBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 内部垂直边框
+
+        borders= getTableBorders(a.borderTop(), TableStyle.TableBordersEnum.BORDER_TOP);
+        xwpfTable.setTopBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 上边框
+
+        borders= getTableBorders(a.borderBottom(), TableStyle.TableBordersEnum.BORDER_BOTTOM);
+        xwpfTable.setBottomBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 下边框
+
+        borders= getTableBorders(a.borderLeft(), TableStyle.TableBordersEnum.BORDER_LEFT);
+        xwpfTable.setLeftBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 左边框
+
+        borders= getTableBorders(a.borderRight(), TableStyle.TableBordersEnum.BORDER_RIGHT);
+        xwpfTable.setRightBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 右边框
+
+        borders= getTableBorders(a.borderBetween(), TableStyle.TableBordersEnum.BORDER_BETWEEN);
+        xwpfTable.setRightBorder(borders.type, borders.size, borders.size, borders.rgbColor); // 右边框
+    }
+
+    private TableStyle.TableBorders getTableBorders(Class<? extends TableBordersStrategy> strategyClazz, TableStyle.TableBordersEnum bordersEnum) {
+        try {
+            return strategyClazz.newInstance().generate(bordersEnum);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
