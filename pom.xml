@@ -11,12 +11,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>shichi-core</module>
-        <module>ShiChi-backend</module>
+        <module>dp-core</module>
+        <module>dp-backend</module>
     </modules>
 
     <groupId>com.shichi.history</groupId>
-    <artifactId>ShihChi</artifactId>
+    <artifactId>DataProcessor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ShihChi</name>
     <description>Demo project for Spring Boot</description>
