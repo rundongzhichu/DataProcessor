@@ -1,11 +1,14 @@
 package com.dp.core.doc.resolver;
 
+import com.dp.core.doc.anno.Picture;
 import com.dp.core.doc.resolver.api.AbstractXWPFResolver;
 import com.dp.core.doc.anno.Paragraph;
+import com.dp.core.doc.resolver.api.Resolver;
 import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
             processFormatStrParagraph((String) paragraph);
         } else if (paragraph instanceof List) {
             for (Object seg : (List) paragraph) {
-                resolve(seg);
+                resolve((String) seg);
             }
         }
     }
@@ -44,6 +47,19 @@ public class XWPFParagraphResolver<C, O, F extends Field, A extends Paragraph> e
         XWPFRun xwpfRun = xwpfParagraph.createRun();
         setStyle(xwpfRun);
         xwpfRun.setText(text);
+        if(f != null) {
+            Annotation[] annotations = f.getDeclaredAnnotations();
+            Resolver resolver = null;
+            for (Annotation anno : annotations) {
+                if(anno instanceof Picture) {
+                    xwpfRun.addBreak(BreakType.TEXT_WRAPPING);
+                    resolver = new XWPFPictureResolver<>(xwpfRun, o, f, (Picture) anno);
+                }
+                if(resolver != null) {
+                    resolver.resolve();
+                }
+            }
+        }
     }
 
     /**
