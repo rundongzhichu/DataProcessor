@@ -45,7 +45,7 @@ public class XWPFCellResolver<C extends XWPFTableRow, O, F extends Field, A exte
             // 如果cell字段附带了段落属性，那么就是用段落配置文字样式
             Paragraph paragraph = ReflectUtils.getAnnonation(f, Paragraph.class);
             if(paragraph != null) {
-                XWPFParagraphResolver  paragraphResolver = new XWPFParagraphResolver(xwpfTableCell, cell, null, paragraph);
+                XWPFParagraphResolver  paragraphResolver = new XWPFParagraphResolver(xwpfTableCell, cell, f, paragraph);
                 paragraphResolver.resolve(cell);
             } else {
                 xwpfTableCell.setText((String) cell);
