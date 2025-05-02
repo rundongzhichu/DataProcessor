@@ -1,13 +1,13 @@
-package com.dp.core;
+package com.dp.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ShichiCoreApplication {
+public class DPBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ShichiCoreApplication.class, args);
+        SpringApplication.run(DPBackendApplication.class, args);
     }
 
 }
